@@ -213,14 +213,26 @@ async function removeWatermark() {
         resultUrl = data.resultUrl;
 
         // Set compare slider
-        document.getElementById('beforeImg').src = originalPreviewUrl;
-        document.getElementById('afterImg').src = resultUrl;
+        const beforeImg = document.getElementById('beforeImg');
+        const afterImg  = document.getElementById('afterImg');
 
-        // Wait for images to load
+        beforeImg.src = originalPreviewUrl;
+        afterImg.src  = resultUrl;
+
+        // Wait for both images to load
         await Promise.all([
-            waitForImage(document.getElementById('beforeImg')),
-            waitForImage(document.getElementById('afterImg')),
+            waitForImage(beforeImg),
+            waitForImage(afterImg),
         ]);
+
+        // Sinkronkan ukuran compare wrap dengan before image
+        // supaya after image tidak zoom/crop
+        const wrap = document.getElementById('compareWrap');
+        wrap.style.height = beforeImg.offsetHeight + 'px';
+
+        // Reset slider ke tengah
+        document.getElementById('compareAfter').style.width = '50%';
+        document.getElementById('compareDivider').style.left = '50%';
 
         setLoading(false);
         showResult();
@@ -313,9 +325,20 @@ function updateCompare(clientX) {
     if (!wrap) return;
     const rect = wrap.getBoundingClientRect();
     let pct = ((clientX - rect.left) / rect.width) * 100;
-    pct = Math.max(2, Math.min(98, pct));
-    document.getElementById('compareAfter').style.width = pct + '%';
-    document.getElementById('compareDivider').style.left = pct + '%';
+    pct = Math.max(1, Math.min(99, pct));
+
+    const afterDiv = document.getElementById('compareAfter');
+    const divider  = document.getElementById('compareDivider');
+    const afterImg = document.getElementById('afterImg');
+
+    // Lebar after div = pct dari wrap
+    afterDiv.style.width = pct + '%';
+    divider.style.left   = pct + '%';
+
+    // After image lebar = 100% dari wrap (bukan dari afterDiv)
+    // Ini yang cegah zoom effect
+    afterImg.style.width = (100 / pct * 100) + '%';
+    afterImg.style.maxWidth = 'none';
 }
 
 // ── LOADING STEPS ANIMATION ───────────────
