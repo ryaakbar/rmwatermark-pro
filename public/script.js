@@ -216,10 +216,20 @@ async function removeWatermark() {
         const beforeImg = document.getElementById('beforeImg');
         const afterImg  = document.getElementById('afterImg');
 
+        // Proxy gambar result lewat backend biar ga kena CORS
+        const proxiedUrl = '/api/image?url=' + encodeURIComponent(resultUrl);
+
         beforeImg.src = originalPreviewUrl;
-        afterImg.src  = resultUrl;
+        afterImg.src  = proxiedUrl;
 
         // Wait for both images to load
+        // Kalau proxy gagal (network/CORS), fallback ke URL langsung
+        afterImg.onerror = () => {
+            console.warn('[compare] proxy failed, trying direct URL');
+            afterImg.onerror = null;
+            afterImg.src = resultUrl;
+        };
+
         await Promise.all([
             waitForImage(beforeImg),
             waitForImage(afterImg),
