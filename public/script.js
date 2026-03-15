@@ -128,7 +128,21 @@ async function removeWatermark() {
             body: formData,
         });
 
-        const data = await res.json();
+        // Safe JSON parse — backend bisa return HTML kalau server error
+        let data;
+        const ct = res.headers.get('content-type') || '';
+        if (ct.includes('application/json')) {
+            data = await res.json();
+        } else {
+            const rawText = await res.text();
+            console.error('[remove] non-JSON response:', rawText.slice(0, 200));
+            throw new Error(
+                res.status === 413 ? 'File terlalu besar! Coba kompres gambar dulu bro.' :
+                res.status === 504 ? 'Server timeout. Coba lagi dengan gambar lebih kecil.' :
+                res.status === 500 ? 'Server error. Coba lagi beberapa saat.' :
+                `Server error HTTP ${res.status}`
+            );
+        }
 
         if (!res.ok || !data.success) {
             throw new Error(data.error || `HTTP ${res.status}`);
