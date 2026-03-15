@@ -45,41 +45,103 @@ function handleDrop(e) {
     if (file) processFile(file);
 }
 
+
+// ── IMAGE COMPRESSION ─────────────────────
+// Compress gambar di frontend sebelum upload
+// Target: max 3MB, max 2000px, quality 0.85
+async function compressImage(file) {
+    return new Promise((resolve) => {
+        const MAX_SIZE = 3 * 1024 * 1024; // 3MB
+        const MAX_DIM  = 2000;            // 2000px
+        const QUALITY  = 0.85;
+
+        // Kalau udah kecil, langsung return
+        if (file.size <= MAX_SIZE) { resolve(file); return; }
+
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+            URL.revokeObjectURL(url);
+
+            let { width, height } = img;
+
+            // Scale down kalau dimensi terlalu besar
+            if (width > MAX_DIM || height > MAX_DIM) {
+                const ratio = Math.min(MAX_DIM / width, MAX_DIM / height);
+                width  = Math.round(width  * ratio);
+                height = Math.round(height * ratio);
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width  = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            canvas.toBlob((blob) => {
+                if (!blob) { resolve(file); return; }
+                const compressed = new File([blob], file.name, {
+                    type: 'image/jpeg',
+                    lastModified: Date.now(),
+                });
+                console.log(`[compress] ${(file.size/1024/1024).toFixed(1)}MB → ${(compressed.size/1024/1024).toFixed(1)}MB`);
+                resolve(compressed);
+            }, 'image/jpeg', QUALITY);
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+        img.src = url;
+    });
+}
+
 function processFile(file) {
     // Validasi tipe
     if (!file.type.startsWith('image/')) {
         showToast('⚠️ Harus file gambar bro!', 'error');
         return;
     }
-    // Validasi ukuran 10MB
-    if (file.size > 10 * 1024 * 1024) {
-        showToast('⚠️ File terlalu besar! Maks 10MB', 'error');
+    // Validasi ukuran - max 20MB (akan di-compress otomatis ke <3MB)
+    if (file.size > 20 * 1024 * 1024) {
+        showToast('⚠️ File terlalu besar! Maks 20MB ya bro', 'error');
         return;
     }
 
-    selectedFile = file;
-
-    // Preview
+    // Preview original dulu
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
         originalPreviewUrl = e.target.result;
 
-        // Update drop zone
+        // Update drop zone sementara
         const dropZone = document.getElementById('dropZone');
         dropZone.classList.add('has-file');
         document.getElementById('dropContent').innerHTML = `
+            <div class="upload-icon">⏳</div>
+            <div class="upload-title">Mengoptimalkan gambar...</div>
+            <div class="upload-sub">Sedang kompres otomatis</div>
+        `;
+
+        // Compress kalau perlu
+        const compressed = await compressImage(file);
+        selectedFile = compressed;
+
+        const wasCompressed = compressed.size < file.size;
+        const sizeInfo = wasCompressed
+            ? `${formatBytes(file.size)} → ${formatBytes(compressed.size)} ✓`
+            : formatBytes(file.size);
+
+        // Update drop zone final
+        document.getElementById('dropContent').innerHTML = `
             <div class="upload-icon">✅</div>
             <div class="upload-title">${file.name}</div>
-            <div class="upload-sub">Klik untuk ganti gambar</div>
+            <div class="upload-sub">${wasCompressed ? '✨ Auto-compressed · Klik untuk ganti' : 'Klik untuk ganti gambar'}</div>
         `;
 
         // Show preview bar
         document.getElementById('previewThumb').src = e.target.result;
         document.getElementById('previewName').textContent = file.name;
-        document.getElementById('previewSize').textContent = formatBytes(file.size);
+        document.getElementById('previewSize').textContent = sizeInfo;
         document.getElementById('filePreview').classList.add('show');
 
-        showToast('✅ Gambar siap diproses!', 'success');
+        showToast(wasCompressed ? `✅ Dikompres otomatis: ${formatBytes(compressed.size)}` : '✅ Gambar siap diproses!', 'success');
     };
     reader.readAsDataURL(file);
 }

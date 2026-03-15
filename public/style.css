@@ -327,6 +327,30 @@ body::after {
 .scroll-btn { width: 42px; height: 42px; background: rgba(10,22,40,0.9); border: 1px solid var(--border-blue); border-radius: 12px; color: var(--blue-400); cursor: pointer; display: grid; place-items: center; backdrop-filter: blur(12px); box-shadow: 0 4px 16px rgba(0,0,0,0.4); transition: all 0.2s ease; }
 .scroll-btn:hover { background: var(--grad-btn); border-color: var(--blue-600); color: #fff; transform: translateY(-1px); }
 
+
+/* ---- AI NOTICE ---- */
+.ai-notice {
+    display: flex; align-items: flex-start; gap: 9px;
+    background: rgba(245,158,11,0.07);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 10px; padding: 10px 14px;
+    margin-bottom: 14px;
+    font-family: var(--font-mono); font-size: 0.70rem;
+    color: #fbbf24; line-height: 1.55;
+}
+.ai-notice i { flex-shrink: 0; margin-top: 1px; }
+
+/* ---- COMPRESS NOTE ---- */
+.upload-compress-note {
+    margin-top: 10px;
+    font-family: var(--font-mono); font-size: 0.67rem;
+    color: var(--blue-400);
+    background: rgba(59,130,246,0.08);
+    border: 1px solid var(--border-blue);
+    border-radius: 6px; padding: 4px 12px;
+    display: inline-block;
+}
+
 /* ---- UTILS ---- */
 .hidden { display: none !important; }
 
