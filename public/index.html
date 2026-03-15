@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Watermark Pro — by ryaakbar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- MARQUEE -->
+<div class="marquee-top">
+    <div class="marquee-content">
+        REMOVE WATERMARK PRO <span class="marquee-dot">◆</span>
+        AI POWERED <span class="marquee-dot">◆</span>
+        FREE NO SIGNUP <span class="marquee-dot">◆</span>
+        INSTANT RESULT <span class="marquee-dot">◆</span>
+        POWERED BY RYAAKBAR <span class="marquee-dot">◆</span>
+        HIGH QUALITY OUTPUT <span class="marquee-dot">◆</span>
+        REMOVE WATERMARK PRO <span class="marquee-dot">◆</span>
+        AI POWERED <span class="marquee-dot">◆</span>
+        FREE NO SIGNUP <span class="marquee-dot">◆</span>
+        INSTANT RESULT <span class="marquee-dot">◆</span>
+        POWERED BY RYAAKBAR <span class="marquee-dot">◆</span>
+        HIGH QUALITY OUTPUT <span class="marquee-dot">◆</span>
+    </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+    <div class="brand-container">
+        <div class="brand-icon-wrap">
+            <i class="fa-solid fa-wand-magic-sparkles" style="color:white;font-size:0.9rem"></i>
+        </div>
+        <div class="brand-glitch">Remove<span>WM</span></div>
+    </div>
+    <div class="nav-right">
+        <div class="status-pill">
+            <div class="dot-live"></div>
+            ONLINE
+        </div>
+    </div>
+</nav>
+
+<!-- MAIN -->
+<div class="container">
+
+    <!-- HERO -->
+    <div class="hero-header reveal">
+        <div class="hero-badge">✨ AI Remove Watermark — Free</div>
+        <h1 class="hero-title">Hapus Watermark<br><span class="grad-text">Seketika.</span></h1>
+        <p class="hero-sub">Upload foto kamu, AI kami akan hapus watermark secara otomatis. Gratis, tanpa login, hasil berkualitas tinggi.</p>
+    </div>
+
+    <!-- UPLOAD CARD -->
+    <div class="glass-card reveal delay-1" id="uploadCard">
+        <div class="card-header">
+            <div class="card-header-icon">
+                <i class="fa-solid fa-cloud-arrow-up" style="color:white"></i>
+            </div>
+            <div>
+                <div class="header-label">📤 Upload Image</div>
+                <div class="header-title">Pilih atau drag foto kamu</div>
+            </div>
+        </div>
+
+        <div style="padding: 22px 26px;">
+
+            <!-- DROP ZONE -->
+            <div class="upload-zone" id="dropZone"
+                onclick="document.getElementById('fileInput').click()"
+                ondragover="handleDragOver(event)"
+                ondragleave="handleDragLeave(event)"
+                ondrop="handleDrop(event)">
+                <input type="file" id="fileInput" accept="image/*"
+                    style="display:none" onchange="handleFileSelect(this)">
+
+                <div id="dropContent">
+                    <div class="upload-icon">🖼️</div>
+                    <div class="upload-title">Klik atau drag foto ke sini</div>
+                    <div class="upload-sub">Max 10MB · Gambar akan diproses AI</div>
+                    <div class="upload-formats">
+                        <span class="format-tag">JPG</span>
+                        <span class="format-tag">PNG</span>
+                        <span class="format-tag">WEBP</span>
+                        <span class="format-tag">BMP</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILE PREVIEW -->
+            <div class="file-preview" id="filePreview">
+                <img src="" alt="" class="file-preview-thumb" id="previewThumb">
+                <div class="file-preview-info">
+                    <div class="file-preview-name" id="previewName">filename.jpg</div>
+                    <div class="file-preview-size" id="previewSize">0 KB</div>
+                </div>
+                <button class="file-preview-remove" onclick="clearFile()" title="Hapus file">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- BUTTON -->
+            <button id="removeBtn" class="cyber-button" onclick="removeWatermark()">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>Remove Watermark</span>
+                <span class="btn-arrow">→</span>
+            </button>
+
+        </div>
+    </div>
+
+    <!-- LOADING -->
+    <div id="loading" class="glass-card loading-card hidden">
+        <div class="loader-ring"></div>
+        <div class="loader-title">AI Sedang Bekerja...</div>
+        <div class="loader-text">Mohon tunggu, proses ini membutuhkan waktu</div>
+        <div class="loader-steps">
+            <div class="loader-step active" id="step1">
+                <div class="step-dot"></div>
+                Mengupload gambar ke server
+            </div>
+            <div class="loader-step" id="step2">
+                <div class="step-dot"></div>
+                AI menganalisis watermark
+            </div>
+            <div class="loader-step" id="step3">
+                <div class="step-dot"></div>
+                Menghapus watermark...
+            </div>
+            <div class="loader-step" id="step4">
+                <div class="step-dot"></div>
+                Menyempurnakan hasil
+            </div>
+        </div>
+        <div class="loader-progress" style="margin-top:20px"><div class="loader-bar"></div></div>
+    </div>
+
+    <!-- ERROR -->
+    <div id="errorCard" class="glass-card error-card hidden">
+        <div class="error-icon">⚠️</div>
+        <div>
+            <div class="error-title">Gagal Memproses Gambar</div>
+            <div class="error-body" id="errorText">Terjadi kesalahan. Coba lagi.</div>
+        </div>
+    </div>
+
+    <!-- RESULT -->
+    <div id="resultCard" class="glass-card result-card hidden">
+        <div class="result-header">
+            <div class="result-type">
+                <div class="result-type-icon">✨</div>
+                Hasil Remove Watermark
+            </div>
+            <div class="result-badge"><span>●</span> SELESAI</div>
+        </div>
+        <div class="result-body">
+
+            <!-- COMPARE SLIDER -->
+            <div class="compare-wrap" id="compareWrap"
+                onmousedown="startDrag(event)"
+                ontouchstart="startDragTouch(event)">
+                <img id="beforeImg" src="" alt="Before">
+                <div class="compare-after" id="compareAfter">
+                    <img id="afterImg" src="" alt="After">
+                </div>
+                <div class="compare-divider" id="compareDivider">
+                    <div class="compare-handle">⇄</div>
+                </div>
+                <div class="compare-labels">
+                    <span class="compare-label before">BEFORE</span>
+                    <span class="compare-label after">AFTER</span>
+                </div>
+            </div>
+
+            <div class="action-row">
+                <button class="btn-action btn-dl" onclick="downloadResult()">
+                    <i class="fa-solid fa-download"></i> Download
+                </button>
+                <button class="btn-action btn-new" onclick="resetAll()">
+                    <i class="fa-solid fa-rotate-left"></i> Upload Baru
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="sann-footer reveal">
+        <div class="footer-divider"></div>
+        <p class="footer-text">Powered by</p>
+        <p class="footer-brand">RYAAKBAR</p>
+        <p class="footer-sub">Free forever · No ads · No cap</p>
+    </footer>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- SCROLL BUTTONS -->
+<div class="scroll-btns" id="scrollBtns">
+    <button class="scroll-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
+    <button class="scroll-btn" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
