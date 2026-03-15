@@ -2,6 +2,7 @@
   "rewrites": [
     { "source": "/api/remove",   "destination": "/api/remove"   },
     { "source": "/api/download", "destination": "/api/download" },
+    { "source": "/api/image",    "destination": "/api/image"    },
     { "source": "/(.*)",         "destination": "/public/$1"    }
   ],
   "headers": [
